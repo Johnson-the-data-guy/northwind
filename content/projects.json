@@ -1,0 +1,56 @@
+[
+  {
+    "slug": "tidewater-almanac",
+    "title": "Tidewater Almanac",
+    "client": "Port Verrin Harbour Trust",
+    "year": 2025,
+    "discipline": "Identity",
+    "summary": "A new identity for a working harbour, drawn from a century of tide tables and the marks painted on its sea wall. The logo redraws itself each day from that morning's high water.",
+    "cover": "/covers/tidewater-almanac.svg"
+  },
+  {
+    "slug": "saltgrass-ferments",
+    "title": "Saltgrass Ferments",
+    "client": "Saltgrass Fermentory",
+    "year": 2025,
+    "discipline": "Packaging",
+    "summary": "Forty jars, one label system, and a colour for every week of the fermenting calendar. Customers now read a shelf the way the makers read a batch.",
+    "cover": "/covers/saltgrass-ferments.svg"
+  },
+  {
+    "slug": "low-tide-sound",
+    "title": "Low Tide Sound",
+    "client": "Low Tide Sound Festival",
+    "year": 2024,
+    "discipline": "Campaign",
+    "summary": "Posters for a three-night festival held on a beach that exists only when the sea allows it. Each edition was printed in step with the tide chart and pulled from the walls once the water came back.",
+    "cover": "/covers/low-tide-sound.svg"
+  },
+  {
+    "slug": "hollow-oak-press",
+    "title": "Hollow Oak Press",
+    "client": "Hollow Oak Press",
+    "year": 2024,
+    "discipline": "Editorial",
+    "summary": "A series design for a small publisher of translated poetry, built on one strict grid and two weights of type. Sixty years of backlist now sits together on a single shelf.",
+    "cover": "/covers/hollow-oak-press.svg"
+  },
+  {
+    "slug": "ferrous-archive",
+    "title": "The Ferrous Archive",
+    "client": "Aldermoor Foundry Museum",
+    "year": 2023,
+    "discipline": "Digital",
+    "summary": "A public archive of nine thousand foundry drawings, indexed by shape as well as by date. Visitors can sketch a curve and find the casting that matches it.",
+    "cover": "/covers/ferrous-archive.svg"
+  },
+  {
+    "slug": "night-ferry",
+    "title": "Night Ferry",
+    "client": "Verrin Sound Crossings",
+    "year": 2023,
+    "discipline": "Wayfinding",
+    "summary": "Signage for a ferry service that runs mostly after dark, tested on deck in rain and low light. The numerals are cut wide enough to read from a moving car ramp.",
+    "cover": "/covers/night-ferry.svg"
+  }
+]
