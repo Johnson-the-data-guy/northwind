@@ -94,9 +94,17 @@ jobs:
         run: scp northwind-${{ github.sha }}.tgz deploy@${{ secrets.DEPLOY_HOST }}:/opt/northwind/releases
 
       - name: Activate release on server
-        run: ssh deploy@${{ secrets.DEPLOY_HOST }} "mkdir -p  /opt/northwind/releases/${{ github.sha}} && tar -xzf /opt/northwind/releases/northwind-${{ github.sha }}.tgz -C /opt/northwind/releases/${{ github.sha }} && ln -sfn /opt/northwind/releases/${{ github.sha }} /opt/northwind/current && rm /opt/northwind/releases/northwind-${{ github.sha }}.tgz && sudo systemctl restart northwind"
-
+        run: |
+          ssh deploy@${{ secrets.DEPLOY_HOST }} "mkdir -p /opt/northwind/releases/${{ github.sha }} &&
+          tar -xzf /opt/northwind/releases/northwind-${{ github.sha }}.tgz -C /opt/northwind/releases/${{ github.sha }} &&
+          ln -sfn /opt/northwind/releases/${{ github.sha }} /opt/northwind/current.tmp &&
+          mv -T /opt/northwind/current.tmp /opt/northwind/current &&
+          rm /opt/northwind/releases/northwind-${{ github.sha }}.tgz && sudo systemctl restart northwind"
       - name: Smoke test
         run: |
          sleep 3
          curl -fsS https://northwind-design.online/health | grep -q ${{ github.sha }} || (echo "Smoke test failed" && exit 1)
+
+      - name: Delete old releases on server
+        run: |
+          ssh deploy@${{ secrets.DEPLOY_HOST }} "cd /opt/northwind/releases && ls -1t | tail -n +6 | xargs rm -rf"
