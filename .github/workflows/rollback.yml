@@ -1,0 +1,41 @@
+name: rollback ci
+
+on:
+  workflow_dispatch:
+    inputs:
+      sha:
+        description: 'Commit SHA to rollback to'
+        required: true
+permissions:
+  contents: read    
+jobs:
+  rollback:
+    runs-on: ubuntu-latest
+    steps:
+        - name: setup ssh
+          run: |
+            mkdir -p ~/.ssh
+            echo "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/id_ed25519
+            chmod 600 ~/.ssh/id_ed25519
+            echo "${{ secrets.DEPLOY_KNOWN_HOST }}" > ~/.ssh/known_hosts
+
+        - name: Release input check
+          env:
+            SHA: ${{ inputs.sha }}
+          run: |
+            if [[ ! "$SHA" =~ ^[0-9a-f]{40}$ ]]; then
+              echo "Invalid commit SHA: "$SHA"
+              exit 1
+            fi
+            ssh deploy@${{ secrets.DEPLOY_HOST }} "test -d /opt/northwind/releases/$SHA" || (echo "Release $SHA does not exist on server" && exit 1)
+
+        - name: Activate release on server
+          run: |
+            ssh deploy@${{ secrets.DEPLOY_HOST }} "ln -sfn /opt/northwind/releases/$SHA /opt/northwind/current.tmp &&
+            mv -T /opt/northwind/current.tmp /opt/northwind/current &&
+            sudo systemctl restart northwind"
+        - name: Smoke test server
+          run: |
+            sleep 3
+            curl -fsS https://northwind-design.online/health | grep -q $SHA || (echo "Smoke test failed" && exit 1)
+     
