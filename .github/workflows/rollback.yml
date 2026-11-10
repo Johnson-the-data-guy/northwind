@@ -24,7 +24,7 @@ jobs:
             SHA: ${{ inputs.sha }}
           run: |
             if [[ ! "$SHA" =~ ^[0-9a-f]{40}$ ]]; then
-              echo "Invalid commit SHA: "$SHA"
+              echo "Invalid commit SHA: $SHA"
               exit 1
             fi
             ssh deploy@${{ secrets.DEPLOY_HOST }} "test -d /opt/northwind/releases/$SHA" || (echo "Release $SHA does not exist on server" && exit 1)
