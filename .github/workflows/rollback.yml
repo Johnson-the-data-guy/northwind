@@ -30,6 +30,8 @@ jobs:
             ssh deploy@${{ secrets.DEPLOY_HOST }} "test -d /opt/northwind/releases/$SHA" || (echo "Release $SHA does not exist on server" && exit 1)
 
         - name: Activate release on server
+          env:
+            SHA: ${{ inputs.sha }}
           run: |
             ssh deploy@${{ secrets.DEPLOY_HOST }} "ln -sfn /opt/northwind/releases/$SHA /opt/northwind/current.tmp &&
             mv -T /opt/northwind/current.tmp /opt/northwind/current &&
