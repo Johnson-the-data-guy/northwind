@@ -21,17 +21,13 @@ jobs:
             chmod 600 ~/.ssh/id_ed25519
             echo "${{ secrets.DEPLOY_KNOWN_HOST }}" > ~/.ssh/known_hosts
 
-        - name: Release input check
+        - name: Release input check/ activate release
           run: |
             if [[ ! "$SHA" =~ ^[0-9a-f]{40}$ ]]; then
               echo "Invalid commit SHA: $SHA"
               exit 1
             fi
-            ssh deploy@${{ secrets.DEPLOY_HOST }} "test -d /opt/northwind/releases/$SHA" || (echo "Release $SHA does not exist on server" && exit 1)
-
-        - name: Activate release on server
-          run: |
-            ssh deploy@${{ secrets.DEPLOY_HOST }} "ln -sfn /opt/northwind/releases/$SHA /opt/northwind/current.tmp &&
+            ssh deploy@${{ secrets.DEPLOY_HOST }} "test -f /opt/northwind/releases/$SHA/server.js && ln -sfn /opt/northwind/releases/$SHA /opt/northwind/current.tmp &&
             mv -T /opt/northwind/current.tmp /opt/northwind/current &&
             sudo systemctl restart northwind"
         - name: Smoke test server
