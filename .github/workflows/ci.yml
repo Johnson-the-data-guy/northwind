@@ -103,6 +103,8 @@ jobs:
         run: |
          sleep 3
          curl -fsS https://staging.northwind-design.online/health | grep -q ${{ github.sha }} || (echo "Smoke test failed" && exit 1)
+
+         curl -fsS https://staging.northwind-design.online/smoke-unknown-page | grep -q '<div id="root">' || (echo "Smoke test failed: Try_file/root does not work" && exit 1)
       - name: Delete old releases on staging server
         run: |
           ssh deploy@${{ secrets.DEPLOY_HOST }} "cd /opt/northwind-staging/releases && ls -1t | tail -n +2 | xargs rm -rf"
@@ -143,6 +145,7 @@ jobs:
         run: |
          sleep 3
          curl -fsS https://northwind-design.online/health | grep -q ${{ github.sha }} || (echo "Smoke test failed" && exit 1)
+         curl -fsS https://northwind-design.online/smoke-unknown-page | grep -q '<div id="root">' || (echo "Smoke test failed: Try_file/root does not work" && exit 1)
 
       - name: Delete old releases on server
         run: |
