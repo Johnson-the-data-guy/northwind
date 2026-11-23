@@ -49,7 +49,7 @@ function Hero() {
         />
         <div className="mt-8 grid md:mt-10 md:grid-cols-12">
           <p className="m-0 text-xl md:col-span-5 md:col-start-8 md:text-2xl">
-            Northwind is a design studio on Lantern Wharf. We make identities, books, packaging and
+            Northwind is a design studio on Lantern Wharf, Wakanda. We make identities, books, packaging and
             websites for clients who would rather be remembered than liked.
           </p>
         </div>
