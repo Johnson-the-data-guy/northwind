@@ -155,7 +155,7 @@ Staging also has **`MemoryMax=200M`**: if it leaks memory, systemd kills only st
 **What:** nginx is the only thing facing the internet; Node stays on `127.0.0.1`. Two site files in `sites-available/`, each **enabled by a symlink** in `sites-enabled/`; the default site's link removed. `server_tokens off` in `nginx.conf`'s `http {}` block hides the nginx version everywhere.
 
 **`northwind` file:**
-1. **Catch-all** (`default_server`): returns **444** — closes the connection without a reply. Requests by raw IP (bots) get nothing.
+1. **Catch-alls, one per port:** port 80 `default_server` returns **444** (closes the connection without a reply); port 443 `default_server` uses `ssl_reject_handshake on` (refuses the HTTPS handshake, no certificate needed). Requests by raw IP or an unknown name get nothing on either port. A `default_server` only covers the port it listens on; without the 443 one, nginx falls back to the first 443 block in the file.
 2. **www**: permanent redirect (301) to `https://northwind-design.online`, keeping the path.
 3. **northwind-design.online** (HTTPS):
    - `root` is the live release's `dist` folder;
@@ -197,6 +197,8 @@ Low TTL (300 s) while setting up. Then certbot (nginx plugin) for `northwind-des
 - A **separate** key pair for the pipeline, no passphrase (CI can't type), labelled `github-actions-deploy`. Public half → `/home/deploy/.ssh/authorized_keys` (folder 700, file 600, owned by deploy). Private half → GitHub secret `DEPLOY_SSH_KEY`.
 - Secret `DEPLOY_HOST` = the IP exactly. Secret for known hosts = the server's host-key line from `ssh-keyscan`, after confirming its SHA256 fingerprint matches the server's own.
 - Sudo rules, written with `visudo` in `/etc/sudoers.d/northwind-deploy` (no dots in the name): `deploy` may run exactly `systemctl restart northwind` and `systemctl restart northwind-staging` as root, no password.
+
+**On a rebuild (same IP, fresh install):** the server gets new host keys, so the pipeline fails with `Host key verification failed`, and the laptop warns too. This is expected, not an attack, but it must be **proven** before trusting the new key: take the fingerprint from `ssh-keyscan` (outside) and the fingerprint read on the server through the **DigitalOcean web console** (a path an attacker can't fake), and only if they match, update the known-hosts secret and remove the old line from the laptop's `known_hosts`. Never trust a new key over the connection being questioned.
 
 **Why:** the pipeline gets exactly the access it needs and nothing more. A sudoers rule allows only the exact command and arguments listed. `visudo` checks syntax before saving; a broken sudoers file locks everyone out of sudo. The known-hosts secret lets the runner verify the server instead of trusting whatever answers. A misnamed secret is silently empty.
 
