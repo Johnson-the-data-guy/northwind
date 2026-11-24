@@ -107,6 +107,9 @@ jobs:
          curl -fsS https://staging.northwind-design.online/health | grep -q ${{ github.sha }} || (echo "Smoke test failed" && exit 1)
 
          curl -fsS https://staging.northwind-design.online/smoke-unknown-page | grep -q '<div id="root">' || (echo "Smoke test failed: Try_file/root does not work" && exit 1)
+
+          SERVED=$(curl -fsS https://staging.northwind-design.online | grep -o 'assets/index-[^"]*\.js'))
+          ssh deploy@${{ secrets.DEPLOY_HOST }} "grep -q /opt/northwind-staging/releases/${{ github.sha }}/dist/${SERVED}" || (echo "Smoke test failed: live site serves $SERVED, which is not in release ${{ github.sha }}. Check nginx root." && exit 1)
       - name: Delete old releases on staging server
         run: |
           ssh deploy@${{ secrets.DEPLOY_HOST }} "cd /opt/northwind-staging/releases && ls -1t | tail -n +2 | xargs rm -rf"
@@ -148,6 +151,9 @@ jobs:
          sleep 3
          curl -fsS https://northwind-design.online/health | grep -q ${{ github.sha }} || (echo "Smoke test failed" && exit 1)
          curl -fsS https://northwind-design.online/smoke-unknown-page | grep -q '<div id="root">' || (echo "Smoke test failed: Try_file/root does not work" && exit 1)
+
+         SERVED=$(curl -fsS https://northwind-design.online | grep -o 'assets/index-[^"]*\.js'))
+         ssh deploy@${{ secrets.DEPLOY_HOST }} "grep -q /opt/northwind/releases/${{ github.sha }}/dist/${SERVED}" || (echo "Smoke test failed: live site serves $SERVED, which is not in release ${{ github.sha }}. Check nginx root." && exit 1)
 
       - name: Delete old releases on server
         run: |
